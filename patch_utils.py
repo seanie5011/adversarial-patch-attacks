@@ -1,8 +1,7 @@
 import numpy as np
 import torch
 
-# Initialize the patch
-# TODO: Add circle type
+# initialize the patch as random set of pixels
 def patch_initialization(image_size=(3, 224, 224), noise_percentage=0.03):
     mask_length = int((noise_percentage * image_size[1] * image_size[2])**0.5)
     patch = np.random.rand(image_size[0], mask_length, mask_length)
@@ -25,7 +24,7 @@ def mask_generation(patch=None, image_size=(3, 224, 224)):
     return applied_patch, mask, x_location, y_location
 
 # Test the patch on dataset
-def test_patch(patch_type, target, patch, test_loader, model):
+def test_patch(target, patch, test_loader, model):
     model.eval()
     test_total, test_actual_total, test_success = 0, 0, 0
     for (image, label) in test_loader:
@@ -37,7 +36,7 @@ def test_patch(patch_type, target, patch, test_loader, model):
         _, predicted = torch.max(output.data, 1)
         if predicted[0] != label and predicted[0].data.cpu().numpy() != target:
             test_actual_total += 1
-            applied_patch, mask, x_location, y_location = mask_generation(patch_type, patch, image_size=(3, 224, 224))
+            applied_patch, mask, x_location, y_location = mask_generation(patch, image_size=(3, 224, 224))
             applied_patch = torch.from_numpy(applied_patch)
             mask = torch.from_numpy(mask)
             perturbated_image = torch.mul(mask.type(torch.FloatTensor), applied_patch.type(torch.FloatTensor)) + torch.mul((1 - mask.type(torch.FloatTensor)), image.type(torch.FloatTensor))
