@@ -1,5 +1,6 @@
 datasets/*/
 training_pictures/*.png
+logs/patch_attack_log.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
