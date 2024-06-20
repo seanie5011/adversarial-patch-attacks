@@ -23,3 +23,13 @@ ffmpeg -f concat -i mylist.txt -c copy mergedfile.mp4
 ## run 2
 
 25 epochs, 55m 026s, 100%, lr1, prob0.9, noise0.1, target1, batchsize1, numworkers4, iterations1000
+
+## run 3
+
+2 epochs, 4m 31s, 100%, lr1, prob0.9, noise0.1, target1, batchsize1, numworkers4, iterations1000
+
+contains pictures, a video and a data file for references
+
+## run 4
+
+25 epochs, , 100%, lr1, prob0.9, noise0.1, target0, batchsize1, numworkers4, iterations1000

@@ -122,7 +122,7 @@ if __name__ == '__main__':
     parser.add_argument('--probability_threshold', type=float, default=0.9, help='minimum target probability')
     parser.add_argument('--lr', type=float, default=1.0, help='learning rate')
     parser.add_argument('--max_iteration', type=int, default=1000, help='max iterations')
-    parser.add_argument('--target', type=int, default=1, help='target label')
+    parser.add_argument('--target', type=int, default=0, help='target label')
     parser.add_argument('--epochs', type=int, default=2, help='total number of epochs')
     parser.add_argument('--log_path', type=str, default='logs/patch_attack_log.csv', help='filepath to store the log')
     parser.add_argument('--train_dir', type=str, default='training/', help='directory to store the training images/animations/data')
@@ -244,43 +244,4 @@ if __name__ == '__main__':
     print(f'Training complete in {time_elapsed // 60:.0f}m {time_elapsed % 60:.0f}s.')
     print(f'The best patch is found at epoch {best_patch_epoch} with success rate {100 * best_patch_success_rate}% on the test dataset.')
 
-    # TODO: proper test with holdout set
-    # testing on most recent patch with some random from test set
-    model.eval()
-    image, label, answer = None, args.target, args.target
-    while label == args.target or answer == args.target:  # only want to test on something that isnt our target (and making sure the model predited correctly when so)
-        print("trying image...")
-        image, label = next(iter(test_loader))
-
-        # get models prediction
-        image = image.to(device)
-        label = label.to(device)
-        output = model(image)
-        _, predicted = torch.max(output.data, 1)
-        answer = predicted[0].data.cpu().numpy()
-
-        # if model predicted something that isnt our desired label
-        if answer != args.target:
-            # get mask and apply to image
-            applied_patch, mask, _, _ = mask_generation(patch, image_size=(3, 224, 224))
-            applied_patch = torch.from_numpy(applied_patch)
-            mask = torch.from_numpy(mask)
-            perturbated_image = torch.mul(mask.type(torch.FloatTensor), applied_patch.type(torch.FloatTensor)) + torch.mul((1 - mask.type(torch.FloatTensor)), image.type(torch.FloatTensor))
-            perturbated_image = perturbated_image.to(device)
-
-            # get new output
-            output = model(perturbated_image)
-            _, predicted = torch.max(output.data, 1)
-            answer = predicted[0].data.cpu().numpy()
-            if answer == args.target:
-                print("success!")
-                break
-            else:
-                print("fail...")
-                answer = args.target  # will make loop restart
-        else:
-            print("bad image...")
-
-    plt.imshow(image_fix(perturbated_image.squeeze().cpu().numpy()))
-    plt.savefig(args.train_dir + 'final_test.png')
-    plt.show()
+    # see digital_attack_test.py to test these patches

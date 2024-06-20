@@ -3,7 +3,7 @@ training/*.png
 training/*.mp4
 training/run1/*
 training/run2/*
-training/run3/*
+training/run3/1*
 training/run4/*
 logs/*.csv
 
